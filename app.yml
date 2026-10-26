@@ -23,7 +23,7 @@ parameters:
     description: >-
       The model to ask. If the node doesn't allow it, the probe retries with
       the first model the governor says it allows.
-    defaultValue: anthropic.claude-haiku-4-5-20251001
+    defaultValue: us.anthropic.claude-haiku-4-5-20251001-v1:0
   - name: REQUIRE_LLM
     type: boolean
     description: Fail the run when LLM access is missing or the call fails.

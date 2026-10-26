@@ -18,7 +18,7 @@ when there is no LLM access or no answer, so the run's status is the test.
 
 | Parameter | Default | |
 |---|---|---|
-| `MODEL` | `anthropic.claude-haiku-4-5-20251001` | The model to ask first |
+| `MODEL` | `us.anthropic.claude-haiku-4-5-20251001-v1:0` | The model to ask first |
 | `REQUIRE_LLM` | `true` | Fail without LLM access or an answer |
 
 Pair it with [test-ports-processor](https://github.com/Pennsieve/test-ports-processor): link its `summary` output to this app's `report` input.

@@ -81,7 +81,7 @@ def allowed_models(body):
 def main():
     input_dir = os.environ.get("INPUT_DIR", "")
     output_dir = os.environ.get("OUTPUT_DIR", "")
-    model = os.environ.get("MODEL") or "anthropic.claude-haiku-4-5-20251001"
+    model = os.environ.get("MODEL") or "us.anthropic.claude-haiku-4-5-20251001-v1:0"
     require = os.environ.get("REQUIRE_LLM", "true").lower() == "true"
     base_url = os.environ.get("ANTHROPIC_BASE_URL", "")
     if not output_dir:
@@ -104,8 +104,11 @@ def main():
     if not base_url:
         result["error"] = "no ANTHROPIC_BASE_URL: the step was given no LLM access"
     else:
-        tried = []
-        while model and model not in tried and len(tried) < 3:
+        # The allow-list a 403 names is kept, so a model that fails another
+        # way (a retired one answers 404 from Bedrock) falls through to the
+        # next allowed one.
+        tried, allowed = [], []
+        while model and model not in tried and len(tried) < 5:
             tried.append(model)
             status, body = ask(base_url, os.environ.get("ANTHROPIC_AUTH_TOKEN"), model, text or "(no input files)")
             attempt = {"model": model, "status": status}
@@ -120,9 +123,10 @@ def main():
                 break
             attempt["error"] = body
             result["attempts"].append(attempt)
-            allowed = [m for m in allowed_models(body) if m not in tried]
-            haiku = [m for m in allowed if "haiku" in m]
-            model = (haiku or allowed or [None])[0]
+            allowed = allowed_models(body) or allowed
+            left = [m for m in allowed if m not in tried]
+            haiku = [m for m in left if "haiku" in m]
+            model = (haiku or left or [None])[0]
         if not result["ok"]:
             result["error"] = "the model call failed (see attempts)"
 
