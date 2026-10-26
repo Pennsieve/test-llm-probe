@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://schemas.pennsieve.io/app-manifest/v1.json
+schemaVersion: "1.0"
+application:
+  name: Test LLM Probe
+  description: >-
+    A test app for LLM access: it asks Claude, through the Pennsieve LLM
+    governor's sidecar, for a one-sentence summary of its input, and reports
+    what access it was given and what came back.
+  type: processor
+  tags:
+    - testing
+    - llm
+runtime:
+  cpu: 256
+  memory: 512
+  computeTypes:
+    - standard
+  # Calls Claude through the Pennsieve LLM governor: LLM access is opt-in.
+  llm: true
+parameters:
+  - name: MODEL
+    type: string
+    description: >-
+      The model to ask. If the node doesn't allow it, the probe retries with
+      the first model the governor says it allows.
+    defaultValue: anthropic.claude-haiku-4-5-20251001
+  - name: REQUIRE_LLM
+    type: boolean
+    description: Fail the run when LLM access is missing or the call fails.
+    defaultValue: true
+inputs:
+  - name: report
+    description: The files to summarize, e.g. test-ports-processor's report.json.
+    mediaTypes:
+      - application/json
+outputs:
+  - name: result
+    description: llm-result.json, saying what LLM access the step had, which model answered, its summary and token usage.
+    mediaTypes:
+      - application/json

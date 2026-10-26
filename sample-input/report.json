@@ -1,0 +1,4 @@
+{
+  "app": "test-ports-processor",
+  "inputs": {"signals": {"foundIn": "signals/", "files": ["signals/recording-01.csv"]}}
+}
