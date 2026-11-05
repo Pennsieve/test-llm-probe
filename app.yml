@@ -13,8 +13,11 @@ application:
 runtime:
   cpu: 256
   memory: 512
+  # The image is CPU-only Python, so it also runs on a node's GPU capacity:
+  # the compute node e2e matrix uses that to test the LLM sidecar in a GPU task.
   computeTypes:
     - standard
+    - gpu
   # Calls Claude through the Pennsieve LLM governor: LLM access is opt-in.
   llm: true
 parameters:
